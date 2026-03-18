@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>種豚舎 業務ガイド</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #f5f2ed;
+  --surface: #ffffff;
+  --surface2: #f0ece5;
+  --border: #ddd8cf;
+  --text: #2c2420;
+  --text2: #6b5f55;
+  --text3: #a09285;
+  --accent: #7a5c3a;
+  --accent-dark: #5c4228;
+  --accent-light: #f0e8dc;
+  --green: #4a7c59;
+  --green-light: #e0efe5;
+  --orange: #c96d2a;
+  --orange-light: #fceee3;
+  --blue: #4a6fa5;
+  --blue-light: #e5edf7;
+  --red: #b04040;
+  --red-light: #faeaea;
+  --purple: #7a5a9a;
+  --purple-light: #f0eaf7;
+  --teal: #3a7a7a;
+  --teal-light: #e0f0f0;
+  --p1: #4a6a2a; --p1-light: #eaf3df;
+  --p2: #2a5a8a; --p2-light: #dceaf7;
+  --p3: #7a4a1a; --p3-light: #f5e8d5;
+  --radius: 12px;
+  --shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+header { background: var(--accent); color: #fff; }
+.header-inner { max-width: 1100px; margin: 0 auto; padding: 18px 24px 0; }
+.header-inner h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.04em; }
+.header-inner p { font-size: 12px; opacity: 0.75; margin-top: 3px; }
+nav { background: var(--accent); border-top: 1px solid rgba(255,255,255,0.15); margin-top: 12px; }
+.nav-inner { max-width: 1100px; margin: 0 auto; display: flex; padding: 0 24px; gap: 2px; flex-wrap: wrap; }
+.tab-btn {
+  background: none; border: none; color: rgba(255,255,255,0.65);
+  font-family: inherit; font-size: 13px; padding: 10px 14px 8px;
+  cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.18s; white-space: nowrap;
+}
+.tab-btn:hover { color: #fff; }
+.tab-btn.active { color: #fff; border-bottom-color: #f5c870; font-weight: 500; }
+
+main { max-width: 1100px; margin: 0 auto; padding: 24px 24px 72px; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* 凡例 */
+.legend-bar {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
+.legend-chip { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; font-size: 11px; font-weight: 700; }
+.chip-1 { background: var(--p1-light); color: var(--p1); border: 1.5px solid var(--p1); }
+.chip-2 { background: var(--p2-light); color: var(--p2); border: 1.5px solid var(--p2); }
+.chip-3 { background: var(--p3-light); color: var(--p3); border: 1.5px solid var(--p3); }
+
+/* 曜日グリッド */
+.day-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(295px, 1fr)); gap: 16px; }
+.day-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; }
+.day-header { padding: 12px 16px 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.day-name { font-size: 18px; font-weight: 700; color: var(--accent); }
+.staff-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+.s3 { background: var(--green-light); color: var(--green); }
+.s2 { background: var(--orange-light); color: var(--orange); }
+.s1 { background: var(--red-light); color: var(--red); }
+.day-body { padding: 12px 14px; }
+.time-block { margin-bottom: 12px; }
+.time-block:last-child { margin-bottom: 0; }
+.time-label { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; }
+.t-am { background: var(--orange-light); color: var(--orange); }
+.t-pm { background: var(--blue-light); color: var(--blue); }
+.t-all { background: var(--surface2); color: var(--text2); }
+
+/* 役割テーブル */
+.role-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.role-table th { padding: 4px 6px; font-size: 11px; font-weight: 700; text-align: center; border-bottom: 1.5px solid var(--border); color: var(--text3); }
+.role-table td { padding: 4px 6px; vertical-align: top; border-bottom: 1px solid var(--surface2); line-height: 1.55; }
+.role-table tr:last-child td { border-bottom: none; }
+.role-table td:not(:last-child) { border-right: 1px solid var(--surface2); }
+.th-1 { color: var(--p1); background: var(--p1-light); }
+.th-2 { color: var(--p2); background: var(--p2-light); }
+.th-3 { color: var(--p3); background: var(--p3-light); }
+.td-shared { color: var(--text2); font-style: italic; font-size: 12px; }
+
+/* 用語リンク */
+.tl { color: var(--accent); text-decoration: underline dotted; cursor: pointer; font-weight: 500; transition: color 0.15s; white-space: nowrap; }
+.tl:hover { color: var(--accent-dark); text-decoration: underline; }
+
+/* 注意ボックス */
+.warn-box { background: var(--red-light); border-left: 3px solid var(--red); border-radius: 0 6px 6px 0; padding: 6px 10px; font-size: 12px; color: var(--red); margin-bottom: 9px; line-height: 1.5; }
+
+/* ===== 用語集 ===== */
+.terms-filter { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
+.filter-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 4px 13px; font-family: inherit; font-size: 13px; cursor: pointer; color: var(--text2); transition: all 0.15s; }
+.filter-btn:hover, .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.terms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 13px; }
+.term-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); padding: 13px 15px; }
+.term-tag { display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 20px; margin-bottom: 6px; }
+.tag-basic { background: var(--orange-light); color: var(--orange); }
+.tag-breed { background: var(--green-light); color: var(--green); }
+.tag-hygiene { background: var(--blue-light); color: var(--blue); }
+.tag-move { background: var(--purple-light); color: var(--purple); }
+.tag-facility { background: var(--surface2); color: var(--text2); }
+.term-name { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 5px; }
+.term-desc { font-size: 12.5px; color: var(--text2); line-height: 1.78; }
+.term-days { margin-top: 7px; display: flex; flex-wrap: wrap; gap: 4px; }
+.day-pill { font-size: 11px; padding: 2px 7px; border-radius: 20px; background: var(--accent-light); color: var(--accent); font-weight: 500; }
+
+/* ===== マップタブ ===== */
+.map-section { margin-bottom: 32px; }
+.section-title { font-size: 17px; font-weight: 700; color: var(--accent); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid var(--accent-light); display: flex; align-items: center; gap: 8px; }
+.map-container { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); padding: 18px; overflow-x: auto; }
+.map-hint { font-size: 12px; color: var(--text3); margin-bottom: 12px; }
+
+/* マップセル共通 */
+.barn-svg-wrap { min-width: 560px; }
+.mc { cursor: pointer; transition: opacity 0.15s; }
+.mc:hover { opacity: 0.8; }
+.mc-label { font-family: 'Noto Sans JP', sans-serif; font-weight: 700; pointer-events: none; }
+.mc-sub { font-family: 'Noto Sans JP', sans-serif; font-weight: 400; pointer-events: none; }
+
+/* マップ凡例 */
+.map-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.ml-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
+.ml-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+/* エリア説明カード */
+.area-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-top: 18px; }
+.area-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 13px 15px; box-shadow: var(--shadow); }
+.area-card-title { font-size: 13px; font-weight: 700; margin-bottom: 7px; display: flex; align-items: center; gap: 6px; }
+.area-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.area-card p { font-size: 12.5px; color: var(--text2); line-height: 1.7; }
+
+/* ===== モーダル ===== */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(30,20,10,0.5); z-index: 200; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal-box { background: var(--surface); border-radius: var(--radius); max-width: 480px; width: 92%; box-shadow: 0 12px 48px rgba(0,0,0,0.22); overflow: hidden; }
+.modal-head { background: var(--accent); color: #fff; padding: 15px 18px 13px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.modal-head-title { font-size: 16px; font-weight: 700; }
+.modal-head-cat { font-size: 11px; opacity: 0.75; margin-top: 3px; }
+.modal-close-btn { background: rgba(255,255,255,0.2); border: none; color: #fff; width: 26px; height: 26px; border-radius: 50%; font-size: 14px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.modal-body-wrap { padding: 16px 18px 18px; }
+.modal-desc { font-size: 13.5px; color: var(--text2); line-height: 1.85; }
+.modal-meta { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
+.modal-meta-label { font-size: 11px; color: var(--text3); margin-bottom: 5px; }
+.modal-days { display: flex; flex-wrap: wrap; gap: 4px; }
+
+@media (max-width: 600px) {
+  .header-inner h1 { font-size: 16px; }
+  .tab-btn { font-size: 12px; padding: 8px 10px 6px; }
+  main { padding: 14px 12px 56px; }
+  .day-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <h1>🐷 種豚舎 業務ガイド</h1>
+    <p>経産種豚舎・育種種豚舎の日常業務マニュアル｜役割別スケジュール</p>
+  </div>
+  <nav>
+    <div class="nav-inner">
+      <button class="tab-btn active" onclick="switchTab('schedule',this)">📅 曜日別スケジュール</button>
+      <button class="tab-btn" onclick="switchTab('map',this)">🗺 豚舎マップ</button>
+      <button class="tab-btn" onclick="switchTab('terms',this)">📖 用語・作業説明</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+<!-- ========== 曜日別スケジュール ========== -->
+<div id="tab-schedule" class="tab-panel active">
+  <div class="legend-bar">
+    <span style="font-size:12px;font-weight:600;color:var(--text2);margin-right:4px;">役割の凡例：</span>
+    <div class="legend-item"><span class="legend-chip chip-1">1</span>1人目の担当</div>
+    <div class="legend-item"><span class="legend-chip chip-2">2</span>2人目の担当</div>
+    <div class="legend-item"><span class="legend-chip chip-3">3</span>3人目の担当</div>
+    <div class="legend-item" style="margin-left:6px;"><span style="color:var(--text3);font-style:italic;font-size:12px;">斜体</span><span style="margin-left:4px;">＝複数人共通</span></div>
+    <div class="legend-item"><span class="tl" style="pointer-events:none;">用語</span><span style="margin-left:4px;">＝クリックで説明表示</span></div>
+  </div>
+
+  <div class="day-grid">
+
+    <!-- 月曜日 -->
+    <div class="day-card">
+      <div class="day-header"><span class="day-name">月曜日</span><span class="staff-badge s3">3人出勤</span></div>
+      <div class="day-body">
+        <div class="time-block">
+          <span class="time-label t-am">AM</span>
+          <table class="role-table">
+            <tr><th class="th-1">① 1人目</th><th class="th-2">② 2人目</th><th class="th-3">③ 3人目</th></tr>
+            <tr><td><span class="tl" onclick="showTerm('kobutsu')">子豚集め</span></td><td>（浄化槽）、<span class="tl" onclick="showTerm('ikukaku')">育隔</span></td><td><span class="tl" onclick="showTerm('hahaara')">母洗</span></td></tr>
+            <tr><td colspan="3" class="td-shared">管理（<span class="tl" onclick="showTerm('funka')">糞かき</span>・<span class="tl" onclick="showTerm('junchiku')">馴致</span>）</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('hatsujyo')">発情確認</span></td><td><span class="tl" onclick="showTerm('hatsujyo')">発情確認</span></td><td>—</td></tr>
+            <tr><td colspan="3" class="td-shared">導入 11:00〜（3号の時は10:30〜）目安</td></tr>
+            <tr><td colspan="3" class="td-shared"><span class="tl" onclick="showTerm('tsukeke')">種付け</span>（昨日種付けした分＆育種）</td></tr>
+          </table>
+        </div>
+        <div class="time-block">
+          <span class="time-label t-pm">PM</span>
+          <table class="role-table">
+            <tr><th class="th-1">① 1人目</th><th class="th-2">② 2人目</th><th class="th-3">③ 3人目</th></tr>
+            <tr><td><span class="tl" onclick="showTerm('tsukeke')">種付け</span>（AM発情母豚）</td><td><span class="tl" onclick="showTerm('chiryo')">治療</span></td><td>導入後の<span class="tl" onclick="showTerm('sutoarashi')">妊スト洗浄</span></td></tr>
+            <tr><td colspan="3" class="td-shared">母豚移動（<span class="tl" onclick="showTerm('tsukesto')">付スト</span>の鑑定済みを<span class="tl" onclick="showTerm('ninsuto')">妊スト</span>へ）</td></tr>
+            <tr><td colspan="2" class="td-shared"><span class="tl" onclick="showTerm('card')">カード付け</span></td><td><span class="tl" onclick="showTerm('ikukaku')">育隔</span></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 火曜日 -->
+    <div class="day-card">
+      <div class="day-header"><span class="day-name">火曜日</span><span class="staff-badge s3">3人出勤</span></div>
+      <div class="day-body">
+        <div class="time-block">
+          <span class="time-label t-am">AM</span>
+          <table class="role-table">
+            <tr><th class="th-1">① 1人目</th><th class="th-2">② 2人目</th><th class="th-3">③ 3人目</th></tr>
+            <tr><td colspan="2" class="td-shared">管理（<span class="tl" onclick="showTerm('funka')">糞かき</span>・<span class="tl" onclick="showTerm('junchiku')">馴致</span>）</td><td><span class="tl" onclick="showTerm('onukan')">大貫</span></td></tr>
+            <tr><td><span class="tl" onclick="showTerm('hatsujyo')">発情確認</span></td><td><span class="tl" onclick="showTerm('hatsujyo')">発情確認</span> / <span class="tl" onclick="showTerm('onukan')">大貫登録</span></td><td>（浄化槽）、<span class="tl" onclick="showTerm('ikukaku')">育隔</span></td></tr>
+            <tr><td colspan="2" class="td-shared"><span class="tl" onclick="showTerm('tsukeke')">種付け</span>（AM発情分）</td><td>月曜移動した<span class="tl" onclick="showTerm('sutoarashi')">付スト洗浄</span></td></tr>
+            <tr><td colspan="2" class="td-shared"><span class="tl" onclick="showTerm('furanuki')">フラ抜き</span></td><td>—</td></tr>
+          </table>
+        </div>
+        <div class="time-block">
+          <span class="time-label t-pm">PM</span>
+          <table class="role-table">
+            <tr><th class="th-1">① 1人目</th><th class="th-2">② 2人目</th><th class="th-3">③ 3人目</th></tr>
+            <tr><td colspan="2" class="td-shared"><span class="tl" onclick="showTerm('tsukeke')">種付け</span>（月曜発情の2回目）</td><td>—</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('chiryo')">治療</span></td><td>添加剤準備 / （分娩舎産処）</td><td>—</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('ikukaku')">育隔</span></td><td>—</td><td>—</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 水曜日 -->
+    <div class="day-card">
+      <div class="day-header"><span class="day-name">水曜日</span><span class="staff-badge s2">2人出勤</span></div>
+      <div class="day-body">
+        <div class="time-block">
+          <span class="time-label t-am">AM</span>
+          <table class="role-table">
+            <tr><th class="th-1">① 1人目</th><th class="th-2">② 2人目</th></tr>
+            <tr><td>管理（<span class="tl" onclick="showTerm('funka')">糞かき</span>・<span class="tl" onclick="showTerm('junchiku')">馴致</span>）</td><td>（浄化槽）、<span class="tl" onclick="showTerm('ikukaku')">育隔</span></td></tr>
+            <tr><td><span class="tl" onclick="showTerm('kanten')">鑑定</span></td><td>—</td></tr>
+            <tr><td colspan="2" class="td-shared"><span class="tl" onclick="showTerm('hatsujyo')">発情確認</span></td></tr>
+            <tr><td colspan="2" class="td-shared"><span class="tl" onclick="showTerm('tsukeke')">種付け</span></td></tr>
+          </table>
+        </div>
+        <div class="time-block">
+          <span class="time-label t-pm">PM</span>
+          <table class="role-table">
+            <tr><th class="th-1">① 1人目</th><th class="th-2">② 2人目</th></tr>
+            <tr><td><span class="tl" onclick="showTerm('chiryo')">治療</span></td><td><span class="tl" onclick="showTerm('gunara')">群洗</span>（土曜繰り上げ分）</td></tr>
+            <tr><td>導入準備（翌週月曜分）</td><td><span class="tl" onclick="showTerm('ikukaku')">育隔</span></td></tr>
+            <tr><td>消毒・<span class="tl" onclick="showTerm('rinyujun')">離乳準備</span></td><td><span class="tl" onclick="showTerm('kantelist')">鑑定落ちリスト作成</span></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 木曜日 -->
+    <div class="day-card">
+      <div class="day-header"><span class="day-name">木曜日</span><span class="staff-badge s3">3人出勤</span></div>
+      <div class="day-body">
+        <div class="warn-box">⚠️ 最初に経産舎の餌を全部落としてから始める</div>
+        <div class="time-block">
+          <span class="time-label t-am">AM</span>
+          <table class="role-table">
+            <tr><th class="th-1">① 1人目</th><th class="th-2">② 2人目</th><th class="th-3">③ 3人目</th></tr>
+            <tr><td>餌落とし・<span class="tl" onclick="showTerm('junchiku')">馴致</span>・通路消毒</td><td>受け取り準備</td><td><span class="tl" onclick="showTerm('rinyu')">離乳</span>準備</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('rinyu')">離乳</span>（中継）※3号時は母出し</td><td><span class="tl" onclick="showTerm('rinyu')">離乳</span>（受け取り）</td><td><span class="tl" onclick="showTerm('rinyu')">離乳</span>（母出し）</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('hatsujyo')">発情確認</span></td><td><span class="tl" onclick="showTerm('hatsujyo')">発情確認</span></td><td>（浄化槽）、<span class="tl" onclick="showTerm('ikukaku')">育隔</span></td></tr>
+            <tr><td colspan="2" class="td-shared">先週<span class="tl" onclick="showTerm('rinyu')">離乳</span>母豚の残り豚を<span class="tl" onclick="showTerm('area41')">4-1</span>へ</td><td>添加剤準備 / ※3号時洗車</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('tsukeke')">種付け</span></td><td><span class="tl" onclick="showTerm('chiryo')">治療</span></td><td>—</td></tr>
+            <tr><td colspan="3" class="td-shared"><span class="tl" onclick="showTerm('oshanasu')">離乳群に雄を放す</span>（夕方戻す）</td></tr>
+          </table>
+        </div>
+        <div class="time-block">
+          <span class="time-label t-pm">PM</span>
+          <table class="role-table">
+            <tr><th class="th-1">① 1人目</th><th class="th-2">② 2人目</th><th class="th-3">③ 3人目</th></tr>
+            <tr><td>翌週導入群の育種→経産移動</td><td><span class="tl" onclick="showTerm('gunara')">群洗</span>（残っていれば）</td><td>分娩舎水洗</td></tr>
+            <tr><td colspan="2" class="td-shared">育種の妊豚移動</td><td>—</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('ikukaku')">育隔</span></td><td>餌調整</td><td>—</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 金曜日 -->
+    <div class="day-card">
+      <div class="day-header"><span class="day-name">金曜日</span><span class="staff-badge s2">2人出勤</span></div>
+      <div class="day-body">
+        <div class="time-block">
+          <span class="time-label t-am">AM</span>
+          <table class="role-table">
+            <tr><th class="th-1">① 1人目</th><th class="th-2">② 2人目</th></tr>
+            <tr><td><span class="tl" onclick="showTerm('kobutsu')">子豚集め</span></td><td>分娩舎水洗</td></tr>
+            <tr><td>管理（<span class="tl" onclick="showTerm('funka')">糞かき</span>・<span class="tl" onclick="showTerm('junchiku')">馴致</span>・<span class="tl" onclick="showTerm('sugar')">砂糖</span>）</td><td>—</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('hatsujyo')">発情確認</span></td><td>—</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('oshanasu')">オス放す</span>（夕方戻す）</td><td>—</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('tsukeke')">種付け</span></td><td>—</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('hchu')">離乳群GGP・GPへのH注</span></td><td>—</td></tr>
+            <tr><td>無発情ギルト・<span class="tl" onclick="showTerm('area41')">4-1</span>残り豚への<span class="tl" onclick="showTerm('hchu')">H注</span></td><td>—</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('ikukaku')">育隔</span></td><td>—</td></tr>
+          </table>
+        </div>
+        <div class="time-block">
+          <span class="time-label t-pm">PM</span>
+          <table class="role-table">
+            <tr><th class="th-1">① 1人目</th><th class="th-2">② 2人目</th></tr>
+            <tr><td>（隔週 <span class="tl" onclick="showTerm('nezumi')">ネズミ対策</span>）</td><td>分娩舎水洗</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('chiryo')">治療</span></td><td>—</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('card')">馴致カード移動</span></td><td>—</td></tr>
+            <tr><td>群飼消毒</td><td>—</td></tr>
+            <tr><td>（<span class="tl" onclick="showTerm('kantelist')">鑑定落ちリスト</span>翌月曜提出）</td><td>—</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('ikukaku')">育隔</span></td><td>—</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 土曜日 -->
+    <div class="day-card">
+      <div class="day-header"><span class="day-name">土曜日</span><span class="staff-badge s2">2人出勤</span></div>
+      <div class="day-body">
+        <div class="time-block">
+          <span class="time-label t-am">AM</span>
+          <table class="role-table">
+            <tr><th class="th-1">① 1人目</th><th class="th-2">② 2人目</th></tr>
+            <tr><td><span class="tl" onclick="showTerm('kobutsu')">子豚集め</span></td><td>（浄化槽）</td></tr>
+            <tr><td>管理（<span class="tl" onclick="showTerm('funka')">糞かき</span>・<span class="tl" onclick="showTerm('junchiku')">馴致</span>・<span class="tl" onclick="showTerm('sugar')">砂糖</span>）</td><td>2号フロー 隔離→育種移動 / 育成→隔離移動</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('gilt')">ギルト受け取り</span></td><td>1号フロー 隔離→育種移動 / 育成→隔離移動</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('hatsujyo')">発情確認</span></td><td><span class="tl" onclick="showTerm('ikuarashi')">隔離舎・育成舎洗浄</span> / ※なければ分娩舎ヘルプ</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('oshanasu')">オス放す</span>（夕方戻す）</td><td>—</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('tsukeke')">種付け</span></td><td>—</td></tr>
+          </table>
+        </div>
+        <div class="time-block">
+          <span class="time-label t-pm">PM</span>
+          <table class="role-table">
+            <tr><th class="th-1">① 1人目</th><th class="th-2">② 2人目</th></tr>
+            <tr><td><span class="tl" onclick="showTerm('chiryo')">治療</span></td><td><span class="tl" onclick="showTerm('ikuarashi')">隔離舎・育成舎洗浄</span> / ※なければ分娩舎ヘルプ</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('kantelist')">鑑定落ちリスト作成</span></td><td><span class="tl" onclick="showTerm('ikukaku')">育隔</span></td></tr>
+            <tr><td>通路洗浄</td><td>—</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 日曜日 -->
+    <div class="day-card">
+      <div class="day-header"><span class="day-name">日曜日</span><span class="staff-badge s2">2人出勤</span></div>
+      <div class="day-body">
+        <div class="time-block">
+          <span class="time-label t-am">AM</span>
+          <table class="role-table">
+            <tr><th class="th-1">① 1人目</th><th class="th-2">② 2人目</th></tr>
+            <tr><td><span class="tl" onclick="showTerm('kobutsu')">子豚集め</span></td><td><span class="tl" onclick="showTerm('ikukaku')">育隔</span>（<span class="tl" onclick="showTerm('rope')">ロープ採材</span>）</td></tr>
+            <tr><td>管理（<span class="tl" onclick="showTerm('funka')">糞かき</span>・<span class="tl" onclick="showTerm('junchiku')">馴致</span>・<span class="tl" onclick="showTerm('sugar')">砂糖</span>）</td><td><span class="tl" onclick="showTerm('saisei')">採精</span></td></tr>
+            <tr><td><span class="tl" onclick="showTerm('hatsujyo')">発情確認</span></td><td>—</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('oshanasu')">オス放す</span>（夕方戻す）</td><td>—</td></tr>
+            <tr><td><span class="tl" onclick="showTerm('tsukeke')">種付け</span></td><td>—</td></tr>
+          </table>
+        </div>
+        <div class="time-block">
+          <span class="time-label t-pm">PM</span>
+          <table class="role-table">
+            <tr><th class="th-1">① 1人目</th><th class="th-2">② 2人目</th></tr>
+            <tr><td><span class="tl" onclick="showTerm('chiryo')">治療</span></td><td>廃用選別</td></tr>
+            <tr><td>翌日導入群 <span class="tl" onclick="showTerm('hopper')">ホッパー洗浄</span></td><td><span class="tl" onclick="showTerm('ikukaku')">育隔</span></td></tr>
+            <tr><td><span class="tl" onclick="showTerm('rinyu')">離乳</span>群 陰部洗浄</td><td>—</td></tr>
+            <tr><td>通路洗浄</td><td>—</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /day-grid -->
+</div>
+
+<!-- ========== 豚舎マップ ========== -->
+<div id="tab-map" class="tab-panel">
+
+  <!-- 経産種豚舎 -->
+  <div class="map-section">
+    <div class="section-title">🏠 経産種豚舎</div>
+    <div class="map-container">
+      <div class="map-hint">※ 各ストールをクリックすると詳細が表示されます</div>
+      <div class="barn-svg-wrap">
+      <svg viewBox="0 0 860 960" width="100%" style="display:block;">
+        <defs>
+          <!-- 付スト矢印（橙） -->
+          <marker id="arr-o" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M1 2L9 5L1 8" fill="none" stroke="#c06030" stroke-width="1.8" stroke-linecap="round"/>
+          </marker>
+          <!-- 妊スト矢印（青） -->
+          <marker id="arr-b" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M1 2L9 5L1 8" fill="none" stroke="#2a7aaa" stroke-width="1.8" stroke-linecap="round"/>
+          </marker>
+        </defs>
+
+        <!-- 外壁 -->
+        <rect x="6" y="6" width="848" height="948" rx="12" fill="#faf7f2" stroke="#c8c0b0" stroke-width="1.5"/>
+
+        <!-- タイトル -->
+        <text x="430" y="34" text-anchor="middle" font-size="15" font-weight="700" fill="#7a5c3a" font-family="Noto Sans JP,sans-serif">経産種豚舎</text>
+
+        <!-- カーテン（入気側）-->
+        <rect x="120" y="44" width="480" height="22" rx="4" fill="#e8e0d4" stroke="#c0b8a8" stroke-width="0.8"/>
+        <text x="360" y="59" text-anchor="middle" font-size="10" fill="#6b5f55" font-family="Noto Sans JP,sans-serif">カーテン（入気側）</text>
+
+        <!-- 集糞ピット（縦長）-->
+        <rect x="68" y="76" width="44" height="678" rx="5" fill="#dce8f0" stroke="#7aaabb" stroke-width="1.2"/>
+        <text x="90" y="415" text-anchor="middle" font-size="11" font-weight="700" fill="#3a5a7a"
+          font-family="Noto Sans JP,sans-serif" transform="rotate(-90,90,415)">集　糞　ピ　ッ　ト</text>
+
+        <!-- 育成種豚舎（集糞ピット左、重ならない位置）-->
+        <rect x="18" y="334" width="44" height="118" rx="5" fill="#fff3e0" stroke="#e0a060" stroke-width="1.2"/>
+        <text x="40" y="393" text-anchor="middle" font-size="10" font-weight="700" fill="#8b5a1a"
+          font-family="Noto Sans JP,sans-serif" transform="rotate(-90,40,393)">育成種豚舎へ</text>
+
+        <!-- ========== ストール ==========
+          列A x=120(cx=194), 列B x=280(cx=354), 列C x=440(cx=514)
+          各w=148, h=76
+          R1 y=76, R2=162, R3=248, R4=334, R5=420, R6=506, R7=592, R8=678
+        -->
+
+        <!-- 行1: 1-3(付), 1-2(付), 1-1(付) -->
+        <g class="mc" onclick="showTerm('tsukesto')">
+          <rect x="120" y="76" width="148" height="76" rx="7" fill="#fce8d8" stroke="#e0935a" stroke-width="1.5"/>
+          <text x="194" y="107" text-anchor="middle" font-size="18" font-weight="700" fill="#8b4a1a" font-family="Noto Sans JP,sans-serif">1-3</text>
+          <text x="194" y="129" text-anchor="middle" font-size="11" fill="#c06030" font-family="Noto Sans JP,sans-serif">付スト</text>
+        </g>
+        <g class="mc" onclick="showTerm('tsukesto')">
+          <rect x="280" y="76" width="148" height="76" rx="7" fill="#fce8d8" stroke="#e0935a" stroke-width="1.5"/>
+          <text x="354" y="107" text-anchor="middle" font-size="18" font-weight="700" fill="#8b4a1a" font-family="Noto Sans JP,sans-serif">1-2</text>
+          <text x="354" y="129" text-anchor="middle" font-size="11" fill="#c06030" font-family="Noto Sans JP,sans-serif">付スト</text>
+        </g>
+        <g class="mc" onclick="showTerm('tsukesto')">
+          <rect x="440" y="76" width="148" height="76" rx="7" fill="#fce8d8" stroke="#e0935a" stroke-width="1.5"/>
+          <text x="514" y="107" text-anchor="middle" font-size="18" font-weight="700" fill="#8b4a1a" font-family="Noto Sans JP,sans-serif">1-1</text>
+          <text x="514" y="129" text-anchor="middle" font-size="11" fill="#c06030" font-family="Noto Sans JP,sans-serif">付スト</text>
+        </g>
+
+        <!-- 行2: 2-3(付), 2-2(付), 2-1(付) -->
+        <g class="mc" onclick="showTerm('tsukesto')">
+          <rect x="120" y="162" width="148" height="76" rx="7" fill="#fce8d8" stroke="#e0935a" stroke-width="1.5"/>
+          <text x="194" y="193" text-anchor="middle" font-size="18" font-weight="700" fill="#8b4a1a" font-family="Noto Sans JP,sans-serif">2-3</text>
+          <text x="194" y="215" text-anchor="middle" font-size="11" fill="#c06030" font-family="Noto Sans JP,sans-serif">付スト</text>
+        </g>
+        <g class="mc" onclick="showTerm('tsukesto')">
+          <rect x="280" y="162" width="148" height="76" rx="7" fill="#fce8d8" stroke="#e0935a" stroke-width="1.5"/>
+          <text x="354" y="193" text-anchor="middle" font-size="18" font-weight="700" fill="#8b4a1a" font-family="Noto Sans JP,sans-serif">2-2</text>
+          <text x="354" y="215" text-anchor="middle" font-size="11" fill="#c06030" font-family="Noto Sans JP,sans-serif">付スト</text>
+        </g>
+        <g class="mc" onclick="showTerm('tsukesto')">
+          <rect x="440" y="162" width="148" height="76" rx="7" fill="#fce8d8" stroke="#e0935a" stroke-width="1.5"/>
+          <text x="514" y="193" text-anchor="middle" font-size="18" font-weight="700" fill="#8b4a1a" font-family="Noto Sans JP,sans-serif">2-1</text>
+          <text x="514" y="215" text-anchor="middle" font-size="11" fill="#c06030" font-family="Noto Sans JP,sans-serif">付スト</text>
+        </g>
+
+        <!-- 行3: 3-3(妊), 3-2(妊), 3-1(付・注意) -->
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="120" y="248" width="148" height="76" rx="7" fill="#d8ecf4" stroke="#5a9eb5" stroke-width="1.5"/>
+          <text x="194" y="279" text-anchor="middle" font-size="18" font-weight="700" fill="#1a5e72" font-family="Noto Sans JP,sans-serif">3-3</text>
+          <text x="194" y="301" text-anchor="middle" font-size="11" fill="#2a8aaa" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="280" y="248" width="148" height="76" rx="7" fill="#d8ecf4" stroke="#5a9eb5" stroke-width="1.5"/>
+          <text x="354" y="279" text-anchor="middle" font-size="18" font-weight="700" fill="#1a5e72" font-family="Noto Sans JP,sans-serif">3-2</text>
+          <text x="354" y="301" text-anchor="middle" font-size="11" fill="#2a8aaa" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+        <g class="mc" onclick="showModalCustom('3-1（注意）','3-1は種付けストールと妊娠ストールの両方が存在するが、現在はすべて種付けストールとして使用中。')">
+          <rect x="440" y="248" width="148" height="76" rx="7" fill="#fce8d8" stroke="#e0935a" stroke-width="2"/>
+          <text x="514" y="277" text-anchor="middle" font-size="17" font-weight="700" fill="#8b4a1a" font-family="Noto Sans JP,sans-serif">3-1 ＊</text>
+          <text x="514" y="300" text-anchor="middle" font-size="10" fill="#c06030" font-family="Noto Sans JP,sans-serif">付スト（現在のみ）</text>
+        </g>
+
+        <!-- 行4: 4-3(妊), 4-2(妊), 4-1(廃用) -->
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="120" y="334" width="148" height="76" rx="7" fill="#d8ecf4" stroke="#5a9eb5" stroke-width="1.5"/>
+          <text x="194" y="365" text-anchor="middle" font-size="18" font-weight="700" fill="#1a5e72" font-family="Noto Sans JP,sans-serif">4-3</text>
+          <text x="194" y="387" text-anchor="middle" font-size="11" fill="#2a8aaa" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="280" y="334" width="148" height="76" rx="7" fill="#d8ecf4" stroke="#5a9eb5" stroke-width="1.5"/>
+          <text x="354" y="365" text-anchor="middle" font-size="18" font-weight="700" fill="#1a5e72" font-family="Noto Sans JP,sans-serif">4-2</text>
+          <text x="354" y="387" text-anchor="middle" font-size="11" fill="#2a8aaa" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+        <g class="mc" onclick="showTerm('area41')">
+          <rect x="440" y="334" width="148" height="76" rx="7" fill="#f0e0f0" stroke="#aa66aa" stroke-width="1.5"/>
+          <text x="514" y="362" text-anchor="middle" font-size="17" font-weight="700" fill="#5a1a6a" font-family="Noto Sans JP,sans-serif">4-1</text>
+          <text x="514" y="383" text-anchor="middle" font-size="9.5" fill="#8a3a9a" font-family="Noto Sans JP,sans-serif">廃用・残り豚・落ち豚・雄</text>
+        </g>
+
+        <!-- 行5: 5-3(妊), 5-2(妊), 5-1(妊) -->
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="120" y="420" width="148" height="76" rx="7" fill="#d8ecf4" stroke="#5a9eb5" stroke-width="1.5"/>
+          <text x="194" y="451" text-anchor="middle" font-size="18" font-weight="700" fill="#1a5e72" font-family="Noto Sans JP,sans-serif">5-3</text>
+          <text x="194" y="473" text-anchor="middle" font-size="11" fill="#2a8aaa" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="280" y="420" width="148" height="76" rx="7" fill="#d8ecf4" stroke="#5a9eb5" stroke-width="1.5"/>
+          <text x="354" y="451" text-anchor="middle" font-size="18" font-weight="700" fill="#1a5e72" font-family="Noto Sans JP,sans-serif">5-2</text>
+          <text x="354" y="473" text-anchor="middle" font-size="11" fill="#2a8aaa" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="440" y="420" width="148" height="76" rx="7" fill="#d8ecf4" stroke="#5a9eb5" stroke-width="1.5"/>
+          <text x="514" y="451" text-anchor="middle" font-size="18" font-weight="700" fill="#1a5e72" font-family="Noto Sans JP,sans-serif">5-1</text>
+          <text x="514" y="473" text-anchor="middle" font-size="11" fill="#2a8aaa" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+
+        <!-- 行6: 6-3(妊), 6-2(妊), 6-1(妊) -->
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="120" y="506" width="148" height="76" rx="7" fill="#d8ecf4" stroke="#5a9eb5" stroke-width="1.5"/>
+          <text x="194" y="537" text-anchor="middle" font-size="18" font-weight="700" fill="#1a5e72" font-family="Noto Sans JP,sans-serif">6-3</text>
+          <text x="194" y="559" text-anchor="middle" font-size="11" fill="#2a8aaa" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="280" y="506" width="148" height="76" rx="7" fill="#d8ecf4" stroke="#5a9eb5" stroke-width="1.5"/>
+          <text x="354" y="537" text-anchor="middle" font-size="18" font-weight="700" fill="#1a5e72" font-family="Noto Sans JP,sans-serif">6-2</text>
+          <text x="354" y="559" text-anchor="middle" font-size="11" fill="#2a8aaa" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="440" y="506" width="148" height="76" rx="7" fill="#d8ecf4" stroke="#5a9eb5" stroke-width="1.5"/>
+          <text x="514" y="537" text-anchor="middle" font-size="18" font-weight="700" fill="#1a5e72" font-family="Noto Sans JP,sans-serif">6-1</text>
+          <text x="514" y="559" text-anchor="middle" font-size="11" fill="#2a8aaa" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+
+        <!-- 行7: 7-3(育種妊スト), 7-2(群飼), 7-1(妊スト) -->
+        <g class="mc" onclick="showModalCustom('育種妊娠ストール 7-3','育種豚の妊娠ストール。')">
+          <rect x="120" y="592" width="148" height="76" rx="7" fill="#e8f0d8" stroke="#7aaa44" stroke-width="1.5"/>
+          <text x="194" y="623" text-anchor="middle" font-size="17" font-weight="700" fill="#3a6010" font-family="Noto Sans JP,sans-serif">7-3</text>
+          <text x="194" y="645" text-anchor="middle" font-size="10" fill="#5a8020" font-family="Noto Sans JP,sans-serif">育種妊スト</text>
+        </g>
+        <g class="mc" onclick="showModalCustom('群飼エリア','足悪や体調不良などが優先的に入るエリア。')">
+          <rect x="280" y="592" width="148" height="76" rx="7" fill="none" stroke="#c8a060" stroke-width="1.8"/>
+          <text x="354" y="623" text-anchor="middle" font-size="17" font-weight="700" fill="#7a4a1a" font-family="Noto Sans JP,sans-serif">群飼</text>
+          <text x="354" y="645" text-anchor="middle" font-size="10" fill="#a06020" font-family="Noto Sans JP,sans-serif">（優先エリア）</text>
+        </g>
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="440" y="592" width="148" height="76" rx="7" fill="#d8ecf4" stroke="#5a9eb5" stroke-width="1.5"/>
+          <text x="514" y="623" text-anchor="middle" font-size="18" font-weight="700" fill="#1a5e72" font-family="Noto Sans JP,sans-serif">7-1</text>
+          <text x="514" y="645" text-anchor="middle" font-size="11" fill="#2a8aaa" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+
+        <!-- 行8: 8-3(育種妊スト), 8-2(群飼), 8-1(妊スト) -->
+        <g class="mc" onclick="showModalCustom('育種妊娠ストール 8-3','育種豚の妊娠ストール。')">
+          <rect x="120" y="678" width="148" height="76" rx="7" fill="#e8f0d8" stroke="#7aaa44" stroke-width="1.5"/>
+          <text x="194" y="709" text-anchor="middle" font-size="17" font-weight="700" fill="#3a6010" font-family="Noto Sans JP,sans-serif">8-3</text>
+          <text x="194" y="731" text-anchor="middle" font-size="10" fill="#5a8020" font-family="Noto Sans JP,sans-serif">育種妊スト</text>
+        </g>
+        <g class="mc" onclick="showModalCustom('群飼エリア（8-2）','足悪や体調不良などが優先的に入るエリア。')">
+          <rect x="280" y="678" width="148" height="76" rx="7" fill="none" stroke="#c8a060" stroke-width="1.8"/>
+          <text x="354" y="709" text-anchor="middle" font-size="17" font-weight="700" fill="#7a4a1a" font-family="Noto Sans JP,sans-serif">8-2</text>
+          <text x="354" y="731" text-anchor="middle" font-size="10" fill="#a06020" font-family="Noto Sans JP,sans-serif">群飼エリア</text>
+        </g>
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="440" y="678" width="148" height="76" rx="7" fill="#d8ecf4" stroke="#5a9eb5" stroke-width="1.5"/>
+          <text x="514" y="709" text-anchor="middle" font-size="18" font-weight="700" fill="#1a5e72" font-family="Noto Sans JP,sans-serif">8-1</text>
+          <text x="514" y="731" text-anchor="middle" font-size="11" fill="#2a8aaa" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+
+        <!-- 餌タンク（丸）右側 cx=730 r=30 -->
+        <!-- a25: R1中央 y=114 -->
+        <circle cx="730" cy="114" r="30" fill="#fff3e0" stroke="#e0a060" stroke-width="1.5"/>
+        <text x="730" y="109" text-anchor="middle" font-size="10" font-weight="700" fill="#8b5a1a" font-family="Noto Sans JP,sans-serif">餌タンク</text>
+        <text x="730" y="124" text-anchor="middle" font-size="13" font-weight="700" fill="#c07030" font-family="Noto Sans JP,sans-serif">a25</text>
+        <!-- a26: R3中央 y=286 -->
+        <circle cx="730" cy="286" r="30" fill="#fff3e0" stroke="#e0a060" stroke-width="1.5"/>
+        <text x="730" y="281" text-anchor="middle" font-size="10" font-weight="700" fill="#8b5a1a" font-family="Noto Sans JP,sans-serif">餌タンク</text>
+        <text x="730" y="296" text-anchor="middle" font-size="13" font-weight="700" fill="#c07030" font-family="Noto Sans JP,sans-serif">a26</text>
+        <!-- a27: R5中央 y=458 -->
+        <circle cx="730" cy="458" r="30" fill="#fff3e0" stroke="#e0a060" stroke-width="1.5"/>
+        <text x="730" y="453" text-anchor="middle" font-size="10" font-weight="700" fill="#8b5a1a" font-family="Noto Sans JP,sans-serif">餌タンク</text>
+        <text x="730" y="468" text-anchor="middle" font-size="13" font-weight="700" fill="#c07030" font-family="Noto Sans JP,sans-serif">a27</text>
+        <!-- a28: R7中央 y=630 -->
+        <circle cx="730" cy="630" r="30" fill="#fff3e0" stroke="#e0a060" stroke-width="1.5"/>
+        <text x="730" y="625" text-anchor="middle" font-size="10" font-weight="700" fill="#8b5a1a" font-family="Noto Sans JP,sans-serif">餌タンク</text>
+        <text x="730" y="640" text-anchor="middle" font-size="13" font-weight="700" fill="#c07030" font-family="Noto Sans JP,sans-serif">a28</text>
+
+        <!-- 3-1注記（餌タンクa26の下に配置、被らない） -->
+        <text x="700" y="328" text-anchor="middle" font-size="9" fill="#b05030" font-family="Noto Sans JP,sans-serif">＊3-1：現在すべて付スト</text>
+        <text x="700" y="341" text-anchor="middle" font-size="9" fill="#b05030" font-family="Noto Sans JP,sans-serif">　として使用中</text>
+
+        <!-- =====================================================
+          付スト流れ矢印（橙）蛇行パターン（写真通り）
+          流れ: 1-1→1-2→1-3  折れ  1-3→2-3→2-2→2-1  折れ  2-1→3-1→3-2→3-3
+          ※写真では右→左、左折れ下、左→右、右折れ下、右→左の蛇行
+
+          座標:
+            1-1右辺=(588,114) 1-1左辺=(440,114)
+            1-2右辺=(428,114) 1-2左辺=(280,114)
+            1-3右辺=(268,114) 1-3左辺=(120,114)
+            折れ線: 左端x=112、右端x=596
+
+            2-3左辺=(120,200) 2-3右辺=(268,200)
+            2-2右辺=(428,200) 2-1右辺=(588,200)
+
+            3-1右辺=(588,286) 3-1左辺=(440,286)
+            3-2左辺=(280,286) 3-3左辺=(120,286)
+        =====================================================-->
+
+        <!-- 付スト: 行1 右→左  1-1→1-2→1-3 -->
+        <!-- 1-1→1-2（右辺から左隣へ） -->
+        <line x1="440" y1="114" x2="428" y2="114" stroke="#c06030" stroke-width="2" marker-end="url(#arr-o)"/>
+        <!-- 1-2→1-3 -->
+        <line x1="280" y1="114" x2="268" y2="114" stroke="#c06030" stroke-width="2" marker-end="url(#arr-o)"/>
+        <!-- 1-3左端→下折れ→2-3へ（左辺外を縦線） -->
+        <polyline points="120,114 112,114 112,200 120,200" fill="none" stroke="#c06030" stroke-width="2" marker-end="url(#arr-o)"/>
+
+        <!-- 付スト: 行2 左→右  2-3→2-2→2-1 -->
+        <line x1="268" y1="200" x2="280" y2="200" stroke="#c06030" stroke-width="2" marker-end="url(#arr-o)"/>
+        <line x1="428" y1="200" x2="440" y2="200" stroke="#c06030" stroke-width="2" marker-end="url(#arr-o)"/>
+        <!-- 2-1右端→下折れ→3-1へ（右辺外を縦線） -->
+        <polyline points="588,200 596,200 596,286 588,286" fill="none" stroke="#c06030" stroke-width="2" marker-end="url(#arr-o)"/>
+
+        <!-- 付スト: 行3 右→左  3-1→3-2→3-3 -->
+        <line x1="440" y1="286" x2="428" y2="286" stroke="#c06030" stroke-width="2" marker-end="url(#arr-o)"/>
+        <line x1="280" y1="286" x2="268" y2="286" stroke="#c06030" stroke-width="2" marker-end="url(#arr-o)"/>
+        <!-- 3-3左端→上折れ→1-3へ（循環ループ：さらに左の外側を通って行1左端へ） -->
+        <polyline points="120,286 106,286 106,114 120,114" fill="none" stroke="#c06030" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arr-o)"/>
+
+        <!-- =====================================================
+          妊スト流れ矢印（青）蛇行パターン（写真通り）
+          流れ: 3-2→3-3→4-3→4-2→4-1(×バツ)  右端縦線  4-1→5-1→5-2→5-3
+                5-3左端縦→6-3→6-2→6-1  右端縦→7-1→8-1
+
+          ※3-2→3-3は付スト3-3と同じマス。妊ストとしての開始は鑑定後
+            実際は3-2(妊スト確定)から3-3方向に流れる
+
+          ここでは写真の矢印どおりに描画:
+            行3(y=286): 3-2→3-3 左向き
+            行3左端→行4左端 縦
+            行4(y=372): 4-3→4-2→4-1 左→右
+            行4右端→行5右端 縦（4-1の右を通る）
+            行5(y=458): 5-1→5-2→5-3 右→左
+            行5左端→行6左端 縦
+            行6(y=544): 6-3→6-2→6-1 左→右
+            行6右端→行7右端 縦
+            行7(y=630): 7-1 右端→下
+            行8(y=716): 8-1
+        =====================================================-->
+
+        <!-- 妊スト: 行3 3-2→3-3 右→左（鑑定後の流れ開始） -->
+        <line x1="280" y1="286" x2="268" y2="286" stroke="#2a7aaa" stroke-width="2" marker-end="url(#arr-b)"/>
+        <!-- 3-3左端→4-3左端 縦 -->
+        <polyline points="120,286 112,286 112,372 120,372" fill="none" stroke="#2a7aaa" stroke-width="2" marker-end="url(#arr-b)"/>
+
+        <!-- 妊スト: 行4 左→右  4-3→4-2→4-1 -->
+        <line x1="268" y1="372" x2="280" y2="372" stroke="#2a7aaa" stroke-width="2" marker-end="url(#arr-b)"/>
+        <line x1="428" y1="372" x2="440" y2="372" stroke="#2a7aaa" stroke-width="2" marker-end="url(#arr-b)"/>
+        <!-- 4-1右端→5-1右端 縦（4-1は廃用なのでバツマーク付近を通過） -->
+        <polyline points="588,372 598,372 598,458 588,458" fill="none" stroke="#2a7aaa" stroke-width="2" marker-end="url(#arr-b)"/>
+
+        <!-- 妊スト: 行5 右→左  5-1→5-2→5-3 -->
+        <line x1="440" y1="458" x2="428" y2="458" stroke="#2a7aaa" stroke-width="2" marker-end="url(#arr-b)"/>
+        <line x1="280" y1="458" x2="268" y2="458" stroke="#2a7aaa" stroke-width="2" marker-end="url(#arr-b)"/>
+        <!-- 5-3左端→6-3左端 縦 -->
+        <polyline points="120,458 112,458 112,544 120,544" fill="none" stroke="#2a7aaa" stroke-width="2" marker-end="url(#arr-b)"/>
+
+        <!-- 妊スト: 行6 左→右  6-3→6-2→6-1 -->
+        <line x1="268" y1="544" x2="280" y2="544" stroke="#2a7aaa" stroke-width="2" marker-end="url(#arr-b)"/>
+        <line x1="428" y1="544" x2="440" y2="544" stroke="#2a7aaa" stroke-width="2" marker-end="url(#arr-b)"/>
+        <!-- 6-1右端→7-1右端 縦 -->
+        <polyline points="588,544 598,544 598,630 588,630" fill="none" stroke="#2a7aaa" stroke-width="2" marker-end="url(#arr-b)"/>
+
+        <!-- 妊スト: 7-1→8-1 縦 -->
+        <line x1="514" y1="668" x2="514" y2="678" stroke="#2a7aaa" stroke-width="2" marker-end="url(#arr-b)"/>
+
+        <!-- 4-1 バツマーク（廃用につき通過のみ） -->
+        <line x1="448" y1="342" x2="580" y2="402" stroke="#aa66aa" stroke-width="1.5" opacity="0.6"/>
+        <line x1="580" y1="342" x2="448" y2="402" stroke="#aa66aa" stroke-width="1.5" opacity="0.6"/>
+
+        <!-- 脱臭装置・通路（下部） -->
+        <rect x="120" y="766" width="148" height="20" rx="4" fill="#e8e0d4" stroke="#c0b8a8" stroke-width="0.8"/>
+        <text x="194" y="779" text-anchor="middle" font-size="9.5" fill="#7a6a5a" font-family="Noto Sans JP,sans-serif">脱臭装置（排気側）</text>
+        <rect x="280" y="766" width="148" height="20" rx="4" fill="#ede8e0" stroke="#bbb0a0" stroke-width="0.8"/>
+        <text x="354" y="779" text-anchor="middle" font-size="9.5" fill="#6b5f55" font-family="Noto Sans JP,sans-serif">中央通路・出入口</text>
+        <rect x="440" y="766" width="148" height="20" rx="4" fill="#e8e0d4" stroke="#c0b8a8" stroke-width="0.8"/>
+        <text x="514" y="779" text-anchor="middle" font-size="9.5" fill="#7a6a5a" font-family="Noto Sans JP,sans-serif">脱臭装置（排気側）</text>
+
+        <!-- フロー凡例 -->
+        <line x1="120" y1="800" x2="160" y2="800" stroke="#c06030" stroke-width="2" marker-end="url(#arr-o)"/>
+        <text x="168" y="804" font-size="10" fill="#c06030" font-family="Noto Sans JP,sans-serif">付スト移動順</text>
+        <line x1="310" y1="800" x2="350" y2="800" stroke="#2a7aaa" stroke-width="2" marker-end="url(#arr-b)"/>
+        <text x="358" y="804" font-size="10" fill="#2a7aaa" font-family="Noto Sans JP,sans-serif">妊スト移動順</text>
+        <line x1="490" y1="796" x2="510" y2="796" stroke="#c06030" stroke-width="2" stroke-dasharray="6,3"/>
+        <text x="518" y="800" font-size="10" fill="#c06030" font-family="Noto Sans JP,sans-serif">循環（付スト）</text>
+
+      </svg>
+      </div>
+      </div>
+      <div class="map-legend">
+        <div class="ml-item"><div class="ml-dot" style="background:#e8f0d8;border:1.5px solid #7aaa44;"></div>育種・群飼</div>
+        <div class="ml-item"><div class="ml-dot" style="background:#fce8d8;border:1.5px solid #e0935a;"></div>種付けストール（付スト）</div>
+        <div class="ml-item"><div class="ml-dot" style="background:#f0eaf7;border:1.5px solid #9a6aba;"></div>フラッシングストール</div>
+        <div class="ml-item"><div class="ml-dot" style="background:#d8ecf4;border:1.5px solid #5a9eb5;"></div>妊娠ストール（妊スト）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 育種種豚舎 -->
+  <div class="map-section">
+    <div class="section-title">🏠 育種種豚舎</div>
+    <div class="map-container">
+      <div class="map-hint">※ 各ストールをクリックすると詳細が表示されます</div>
+      <div class="barn-svg-wrap">
+      <svg viewBox="0 0 820 680" width="100%" style="display:block;">
+        <defs>
+          <marker id="arr-o2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M1 2L9 5L1 8" fill="none" stroke="#c06030" stroke-width="1.8" stroke-linecap="round"/>
+          </marker>
+          <marker id="arr-p2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M1 2L9 5L1 8" fill="none" stroke="#7a4aaa" stroke-width="1.8" stroke-linecap="round"/>
+          </marker>
+          <marker id="arr-g2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M1 2L9 5L1 8" fill="none" stroke="#3a8a44" stroke-width="1.8" stroke-linecap="round"/>
+          </marker>
+        </defs>
+
+        <!-- 外壁 -->
+        <rect x="6" y="6" width="808" height="668" rx="12" fill="#faf7f2" stroke="#c8c0b0" stroke-width="1.5"/>
+
+        <!-- タイトル -->
+        <text x="410" y="32" text-anchor="middle" font-size="15" font-weight="700" fill="#7a5c3a" font-family="Noto Sans JP,sans-serif">育種種豚舎</text>
+
+        <!-- 出荷台 -->
+        <rect x="20" y="52" width="140" height="40" rx="6" fill="#e8e0d4" stroke="#c0b8a8" stroke-width="1.2"/>
+        <text x="90" y="76" text-anchor="middle" font-size="12" font-weight="700" fill="#6b5f55" font-family="Noto Sans JP,sans-serif">出荷台</text>
+
+        <!-- 群飼エリア（行2〜行6） -->
+        <g class="mc" onclick="showModalCustom('群飼エリア（育種）','育種豚をまとめて飼育するスペース。フラッシングストールへの移動元。')">
+          <rect x="20" y="102" width="140" height="406" rx="8" fill="none" stroke="#c8a060" stroke-width="1.8"/>
+          <text x="90" y="308" text-anchor="middle" font-size="16" font-weight="700" fill="#7a4a1a" font-family="Noto Sans JP,sans-serif">群　飼</text>
+        </g>
+
+        <!-- 群飼への入口ブロック -->
+        <rect x="168" y="244" width="16" height="40" rx="3" fill="#f5e8c8" stroke="#c8a060" stroke-width="1.2"/>
+        <text x="155" y="260" text-anchor="end" font-size="9" fill="#a06020" font-family="Noto Sans JP,sans-serif">群飼</text>
+        <text x="155" y="273" text-anchor="end" font-size="9" fill="#a06020" font-family="Noto Sans JP,sans-serif">入口</text>
+
+        <!-- 集糞ピット -->
+        <rect x="516" y="52" width="44" height="506" rx="5" fill="#dce8f0" stroke="#7aaabb" stroke-width="1.2"/>
+        <text x="538" y="305" text-anchor="middle" font-size="10" font-weight="700" fill="#3a5a7a" font-family="Noto Sans JP,sans-serif" transform="rotate(-90,538,305)">集　糞　ピ　ッ　ト</text>
+
+        <!-- ========== ストール ==========
+          左列: x=192 cx=266 左辺=192 右辺=340
+          右列: x=352 cx=426 左辺=352 右辺=500
+          R1 y=52  cy=90   下辺=128
+          R2 y=138 cy=176  上辺=138 下辺=214
+          R3 y=224 cy=262  上辺=224 下辺=300
+          R4 y=310 cy=348  上辺=310 下辺=386
+          R5 y=396 cy=434  上辺=396 下辺=472
+          R6 y=482 cy=520  上辺=482 下辺=558
+          右辺外=508  左辺外=184
+        -->
+
+        <!-- 行1 -->
+        <g class="mc" onclick="showTerm('tsukesto')">
+          <rect x="192" y="52" width="148" height="76" rx="7" fill="#fce8d8" stroke="#e0935a" stroke-width="1.5"/>
+          <text x="266" y="84" text-anchor="middle" font-size="18" font-weight="700" fill="#8b4a1a" font-family="Noto Sans JP,sans-serif">1-2</text>
+          <text x="266" y="106" text-anchor="middle" font-size="11" fill="#c06030" font-family="Noto Sans JP,sans-serif">付スト</text>
+        </g>
+        <g class="mc" onclick="showTerm('tsukesto')">
+          <rect x="352" y="52" width="148" height="76" rx="7" fill="#fce8d8" stroke="#e0935a" stroke-width="1.5"/>
+          <text x="426" y="84" text-anchor="middle" font-size="18" font-weight="700" fill="#8b4a1a" font-family="Noto Sans JP,sans-serif">1-1</text>
+          <text x="426" y="106" text-anchor="middle" font-size="11" fill="#c06030" font-family="Noto Sans JP,sans-serif">付スト</text>
+        </g>
+
+        <!-- 行2 -->
+        <g class="mc" onclick="showTerm('tsukesto')">
+          <rect x="192" y="138" width="148" height="76" rx="7" fill="#fce8d8" stroke="#e0935a" stroke-width="1.5"/>
+          <text x="266" y="170" text-anchor="middle" font-size="18" font-weight="700" fill="#8b4a1a" font-family="Noto Sans JP,sans-serif">2-1</text>
+          <text x="266" y="192" text-anchor="middle" font-size="11" fill="#c06030" font-family="Noto Sans JP,sans-serif">付スト</text>
+        </g>
+        <g class="mc" onclick="showTerm('tsukesto')">
+          <rect x="352" y="138" width="148" height="76" rx="7" fill="#fce8d8" stroke="#e0935a" stroke-width="1.5"/>
+          <text x="426" y="170" text-anchor="middle" font-size="18" font-weight="700" fill="#8b4a1a" font-family="Noto Sans JP,sans-serif">2-2</text>
+          <text x="426" y="192" text-anchor="middle" font-size="11" fill="#c06030" font-family="Noto Sans JP,sans-serif">付スト</text>
+        </g>
+
+        <!-- 行3 -->
+        <g class="mc" onclick="showTerm('furanuki')">
+          <rect x="192" y="224" width="148" height="76" rx="7" fill="#f0eaf7" stroke="#9a6aba" stroke-width="1.5"/>
+          <text x="266" y="256" text-anchor="middle" font-size="18" font-weight="700" fill="#5a2a7a" font-family="Noto Sans JP,sans-serif">3-1</text>
+          <text x="266" y="278" text-anchor="middle" font-size="11" fill="#8a4aaa" font-family="Noto Sans JP,sans-serif">フラスト</text>
+        </g>
+        <g class="mc" onclick="showTerm('furanuki')">
+          <rect x="352" y="224" width="148" height="76" rx="7" fill="#f0eaf7" stroke="#9a6aba" stroke-width="1.5"/>
+          <text x="426" y="256" text-anchor="middle" font-size="18" font-weight="700" fill="#5a2a7a" font-family="Noto Sans JP,sans-serif">3-2</text>
+          <text x="426" y="278" text-anchor="middle" font-size="11" fill="#8a4aaa" font-family="Noto Sans JP,sans-serif">フラスト</text>
+        </g>
+
+        <!-- 行4 -->
+        <g class="mc" onclick="showTerm('furanuki')">
+          <rect x="192" y="310" width="148" height="76" rx="7" fill="#f0eaf7" stroke="#9a6aba" stroke-width="1.5"/>
+          <text x="266" y="342" text-anchor="middle" font-size="18" font-weight="700" fill="#5a2a7a" font-family="Noto Sans JP,sans-serif">4-1</text>
+          <text x="266" y="364" text-anchor="middle" font-size="11" fill="#8a4aaa" font-family="Noto Sans JP,sans-serif">フラスト</text>
+        </g>
+        <g class="mc" onclick="showTerm('furanuki')">
+          <rect x="352" y="310" width="148" height="76" rx="7" fill="#f0eaf7" stroke="#9a6aba" stroke-width="1.5"/>
+          <text x="426" y="342" text-anchor="middle" font-size="18" font-weight="700" fill="#5a2a7a" font-family="Noto Sans JP,sans-serif">4-2</text>
+          <text x="426" y="364" text-anchor="middle" font-size="11" fill="#8a4aaa" font-family="Noto Sans JP,sans-serif">フラスト</text>
+        </g>
+
+        <!-- 行5 -->
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="192" y="396" width="148" height="76" rx="7" fill="#e8f0d8" stroke="#7aaa44" stroke-width="1.5"/>
+          <text x="266" y="428" text-anchor="middle" font-size="18" font-weight="700" fill="#3a6010" font-family="Noto Sans JP,sans-serif">5-1</text>
+          <text x="266" y="450" text-anchor="middle" font-size="11" fill="#5a8020" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="352" y="396" width="148" height="76" rx="7" fill="#e8f0d8" stroke="#7aaa44" stroke-width="1.5"/>
+          <text x="426" y="428" text-anchor="middle" font-size="18" font-weight="700" fill="#3a6010" font-family="Noto Sans JP,sans-serif">5-2</text>
+          <text x="426" y="450" text-anchor="middle" font-size="11" fill="#5a8020" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+
+        <!-- 行6 -->
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="192" y="482" width="148" height="76" rx="7" fill="#e8f0d8" stroke="#7aaa44" stroke-width="1.5"/>
+          <text x="266" y="514" text-anchor="middle" font-size="18" font-weight="700" fill="#3a6010" font-family="Noto Sans JP,sans-serif">6-1</text>
+          <text x="266" y="536" text-anchor="middle" font-size="11" fill="#5a8020" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+        <g class="mc" onclick="showTerm('ninsuto')">
+          <rect x="352" y="482" width="148" height="76" rx="7" fill="#e8f0d8" stroke="#7aaa44" stroke-width="1.5"/>
+          <text x="426" y="514" text-anchor="middle" font-size="18" font-weight="700" fill="#3a6010" font-family="Noto Sans JP,sans-serif">6-2</text>
+          <text x="426" y="536" text-anchor="middle" font-size="11" fill="#5a8020" font-family="Noto Sans JP,sans-serif">妊スト</text>
+        </g>
+
+        <!-- =====================================================
+          矢印フロー（写真どおり）
+
+          【付スト循環（橙）】
+          写真: 1-2←1-1（行1 右→左）、右外上辺を通り左外で下折れ
+                2-1→2-2（行2 左→右）、右外で上折れ戻る
+          つまり:
+            右辺外x=508 → 上辺y=44を通って → 1-1右辺に入る向きは逆（写真は1-2←1-1）
+            実際の流れ: 群飼→1-1→1-2（行1右→左）→左外縦下→2-1→2-2（行2左→右）→右外縦上→1-1
+
+            群飼 → 1-1（群飼右辺 → 1-1左辺）
+            1-1 → 1-2：行1 右→左（上辺 y=44 なし、直接横線）
+            1-2 → 2-1：左辺外 x=184 縦下
+            2-1 → 2-2：行2 左→右
+            2-2 → 1-1：右辺外 x=508 縦上
+
+          【フラスト循環（紫）】
+          写真: 3-2←3-1（行3 右→左）、左外縦下→4-1→4-2（行4左→右）、右外縦上→3-2
+          つまり:
+            群飼 → 3-1（群飼右辺 → 3-1左辺）
+            3-1 → 3-2：行3 右←左（3-2←3-1、つまり3-1右辺→3-2左辺）
+            実は写真「3-1←3-2」なので: 群飼→3-2→3-1方向
+            再確認写真: 「3-1 ← 3-2 ←」= 3-2から3-1へ、右外から上辺を通って
+            行3: 右外(x=508)→上辺y=216→3-1左辺=192（3-2→3-1）
+            左辺外(x=184) 縦下
+            行4: 4-1→4-2（左→右）
+            右辺外(x=508) 縦上→3-2右辺
+
+            つまり: 3-2→3-1→左外縦下→4-1→4-2→右外縦上→3-2（循環）
+            入口: 群飼→3-1
+
+          【妊スト（緑）】
+          写真:
+            「経7-3へ←」が5-1の左側（5-1から左向きで出る矢印）
+            「経8-3から→」が6-1の左側（6-1に右向きで入る矢印）
+            行5: 5-2→5-1（右→左）、右外上辺→右辺に入る（5-2←← 右外から）
+            行6: 6-1→6-2（左→右）、右外縦上→5-2右辺
+
+          詳細:
+            経産7-3から→5-1（上から↓、入口）
+            5-2→5-1: 右辺外x=508→上辺y=388→5-1右辺500（右から左へ）
+                      実際は: 5-2右辺x=500→外x=508→上辺y=388→折れ→5-1左辺?
+                      写真をよく見ると: 右外の縦線が5-2右→上→5-1右辺に入る（行5右外ループ）
+                      → 5-2右辺外→上辺外→5-1右辺: polyline 500,434→508,434→508,396→500,396
+            5-1→経産7-3へ: 5-1左辺から左へ出る矢印
+            6-1 → 6-2: 左→右
+            6-2→5-2: 右辺外x=508 縦上 500,520→508,520→508,434→500,434
+            経産8-3から→6-1: 6-1左辺から左方向に入る矢印（右向き矢印が6-1へ）
+        =====================================================-->
+
+        <!-- === 付スト循環（橙）=== -->
+        <!-- 群飼 → 1-1 矢印削除 -->
+
+        <!-- 1-1 → 1-2（行1 右→左 直接横線） -->
+        <line x1="352" y1="90" x2="340" y2="90" stroke="#c06030" stroke-width="2" marker-end="url(#arr-o2)"/>
+
+        <!-- 1-2 → 2-1（左辺外 x=184 縦下） -->
+        <polyline points="192,90 184,90 184,176 192,176" fill="none" stroke="#c06030" stroke-width="2" marker-end="url(#arr-o2)"/>
+
+        <!-- 2-1 → 2-2（行2 左→右） -->
+        <line x1="340" y1="176" x2="352" y2="176" stroke="#c06030" stroke-width="2" marker-end="url(#arr-o2)"/>
+
+        <!-- 2-2 → 1-1（右辺外 x=508 縦上） -->
+        <polyline points="500,176 508,176 508,90 500,90" fill="none" stroke="#c06030" stroke-width="2" marker-end="url(#arr-o2)"/>
+
+        <!-- === フラスト循環（紫）=== -->
+        <!-- 群飼 → 3-1 矢印削除 -->
+
+        <!-- 3-1 → 3-2（行3 左→右: 写真は3-2←3-1なので3-1右辺→3-2左辺） -->
+        <!-- 写真: 3-1←3-2← つまり右外から3-2→3-1へ流れ、入口は群飼→3-1
+             実フロー: 群飼→3-1→（ループ: 3-1左下→4-1→4-2→右上→3-2→3-1）
+             写真の矢印: 3-2の右に折れ線があり3-2←の向きなので、4-2→右外縦上→3-2へ入る
+             3-2→3-1: 行3 右→左 -->
+        <line x1="352" y1="262" x2="340" y2="262" stroke="#7a4aaa" stroke-width="2" marker-end="url(#arr-p2)"/>
+
+        <!-- 3-1 → 4-1（左辺外 x=184 縦下） -->
+        <polyline points="192,262 184,262 184,348 192,348" fill="none" stroke="#7a4aaa" stroke-width="2" marker-end="url(#arr-p2)"/>
+
+        <!-- 4-1 → 4-2（行4 左→右） -->
+        <line x1="340" y1="348" x2="352" y2="348" stroke="#7a4aaa" stroke-width="2" marker-end="url(#arr-p2)"/>
+
+        <!-- 4-2 → 3-2（右辺外 x=508 縦上） -->
+        <polyline points="500,348 508,348 508,262 500,262" fill="none" stroke="#7a4aaa" stroke-width="2" marker-end="url(#arr-p2)"/>
+
+        <!-- === 妊スト（緑）=== -->
+        <!-- 経産7-3から → 5-1 上側矢印削除 -->
+
+        <!-- 5-2 → 5-1（行5 右→左） -->
+        <line x1="352" y1="434" x2="340" y2="434" stroke="#3a8a44" stroke-width="2" marker-end="url(#arr-g2)"/>
+
+        <!-- 5-1 → 経産7-3へ（5-1左辺から左向き矢印） -->
+        <line x1="192" y1="420" x2="160" y2="420" stroke="#3a8a44" stroke-width="2" marker-end="url(#arr-g2)"/>
+        <text x="148" y="416" text-anchor="end" font-size="9" fill="#3a6010" font-family="Noto Sans JP,sans-serif">経産</text>
+        <text x="148" y="428" text-anchor="end" font-size="9" fill="#3a6010" font-family="Noto Sans JP,sans-serif">7-3へ</text>
+
+        <!-- 経産8-3から → 6-1（テキストのみ、矢印は別途） -->
+        <text x="148" y="502" text-anchor="end" font-size="9" fill="#3a6010" font-family="Noto Sans JP,sans-serif">経産</text>
+        <text x="148" y="514" text-anchor="end" font-size="9" fill="#3a6010" font-family="Noto Sans JP,sans-serif">8-3から</text>
+        <line x1="160" y1="506" x2="192" y2="506" stroke="#3a8a44" stroke-width="2" marker-end="url(#arr-g2)"/>
+
+        <!-- 6-1 → 6-2（左→右） -->
+        <line x1="340" y1="520" x2="352" y2="520" stroke="#3a8a44" stroke-width="2" marker-end="url(#arr-g2)"/>
+
+        <!-- 6-2 → 5-2（右辺外 x=508 縦上） -->
+        <polyline points="500,520 508,520 508,434 500,434" fill="none" stroke="#3a8a44" stroke-width="2" marker-end="url(#arr-g2)"/>
+
+        <!-- 餌タンク（群飼下 横並び a23左, a24右） -->
+        <circle cx="50" cy="568" r="26" fill="#fff3e0" stroke="#e0a060" stroke-width="1.5"/>
+        <text x="50" y="563" text-anchor="middle" font-size="9" font-weight="700" fill="#8b5a1a" font-family="Noto Sans JP,sans-serif">餌タンク</text>
+        <text x="50" y="577" text-anchor="middle" font-size="12" font-weight="700" fill="#c07030" font-family="Noto Sans JP,sans-serif">a23</text>
+
+        <circle cx="120" cy="568" r="26" fill="#fff3e0" stroke="#e0a060" stroke-width="1.5"/>
+        <text x="120" y="563" text-anchor="middle" font-size="9" font-weight="700" fill="#8b5a1a" font-family="Noto Sans JP,sans-serif">餌タンク</text>
+        <text x="120" y="577" text-anchor="middle" font-size="12" font-weight="700" fill="#c07030" font-family="Noto Sans JP,sans-serif">a24</text>
+
+        <!-- 経産種豚舎へ -->
+        <rect x="192" y="576" width="148" height="22" rx="4" fill="#ede8e0" stroke="#bbb0a0" stroke-width="0.8"/>
+        <text x="266" y="591" text-anchor="middle" font-size="9.5" fill="#6b5f55" font-family="Noto Sans JP,sans-serif">経産種豚舎へ</text>
+
+        <!-- 脱臭装置（排気側） -->
+        <rect x="352" y="576" width="148" height="22" rx="4" fill="#e8e0d4" stroke="#c0b8a8" stroke-width="0.8"/>
+        <text x="426" y="591" text-anchor="middle" font-size="9.5" fill="#7a6a5a" font-family="Noto Sans JP,sans-serif">脱臭装置（排気側）</text>
+
+        <!-- フロー凡例 -->
+        <line x1="192" y1="622" x2="226" y2="622" stroke="#c06030" stroke-width="2" marker-end="url(#arr-o2)"/>
+        <text x="234" y="626" font-size="10" fill="#c06030" font-family="Noto Sans JP,sans-serif">付スト（循環）</text>
+        <line x1="340" y1="622" x2="374" y2="622" stroke="#7a4aaa" stroke-width="2" marker-end="url(#arr-p2)"/>
+        <text x="382" y="626" font-size="10" fill="#7a4aaa" font-family="Noto Sans JP,sans-serif">フラスト（循環）</text>
+        <line x1="492" y1="622" x2="526" y2="622" stroke="#3a8a44" stroke-width="2" marker-end="url(#arr-g2)"/>
+        <text x="534" y="626" font-size="10" fill="#3a8a44" font-family="Noto Sans JP,sans-serif">妊スト</text>
+
+      </svg>
+      </div>
+      <div class="map-legend">
+        <div class="ml-item"><div class="ml-dot" style="background:#fce8d8;border:1.5px solid #e0935a;"></div>付スト（種付けストール）</div>
+        <div class="ml-item"><div class="ml-dot" style="background:#f0eaf7;border:1.5px solid #9a6aba;"></div>フラッシングストール（フラスト）</div>
+        <div class="ml-item"><div class="ml-dot" style="background:#e8f0d8;border:1.5px solid #7aaa44;"></div>妊娠ストール（妊スト）</div>
+        <div class="ml-item"><div class="ml-dot" style="background:none;border:1.8px solid #c8a060;"></div>群飼エリア</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /tab-map -->
+
+<!-- ========== 用語集 ========== -->
+<div id="tab-terms" class="tab-panel">
+  <div class="terms-filter">
+    <button class="filter-btn active" onclick="filterTerms('all',this)">すべて</button>
+    <button class="filter-btn" onclick="filterTerms('basic',this)">基本作業</button>
+    <button class="filter-btn" onclick="filterTerms('breed',this)">繁殖作業</button>
+    <button class="filter-btn" onclick="filterTerms('hygiene',this)">衛生・処置</button>
+    <button class="filter-btn" onclick="filterTerms('move',this)">移動・管理</button>
+    <button class="filter-btn" onclick="filterTerms('facility',this)">設備・場所</button>
+  </div>
+  <div class="terms-grid" id="terms-grid"></div>
+</div>
+
+</main>
+
+<!-- モーダル -->
+<div class="modal-overlay" id="termModal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div>
+        <div class="modal-head-title" id="modalTitle"></div>
+        <div class="modal-head-cat" id="modalCat"></div>
+      </div>
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body-wrap">
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="modal-meta" id="modalMeta" style="display:none">
+        <div class="modal-meta-label">実施する曜日</div>
+        <div class="modal-days" id="modalDays"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const TERMS = {
+  kobutsu:{name:'子豚集め',cat:'basic',catLabel:'基本作業',desc:'分娩舎で生まれた子豚を集める作業。月・金・土・日曜日のAMに実施。分娩舎スタッフとの連携が必要。',days:['月','金','土','日']},
+  funka:{name:'糞かき',cat:'basic',catLabel:'基本作業',desc:'豚房内に溜まった糞を取り除く清掃作業。毎日実施する基本業務。豚の健康管理・衛生維持のために欠かせない。',days:['月','火','水','木','金','土','日']},
+  junchiku:{name:'馴致（じゅんち）',cat:'basic',catLabel:'基本作業',desc:'ギルト（候補豚）や自家更新豚などを農場独自の環境や微生物（病原菌・ウイルス）にあらかじめ慣れさせ、免疫を獲得するための作業。\n分娩舎の子豚の下痢と母豚の糞を材料として作成する。\n対象の母豚に1週間、毎朝実施する。',days:['月','火','水','木','金','土','日']},
+  sugar:{name:'砂糖（給与）',cat:'basic',catLabel:'基本作業',desc:'金・土・日曜日の管理時に砂糖を豚に与える作業。エネルギー補給・発情促進・食欲増進が目的。',days:['金','土','日']},
+  hatsujyo:{name:'発情確認',cat:'breed',catLabel:'繁殖作業',desc:'雌豚がオスに対してじっとする「スタンディング反応」を確認する作業。オス豚を近づけて反応を見る。\n【注意】その週の離乳群以外の場所で発情が確認された場合は、その週の種付群に続くように移動させる。',days:['月','火','水','木','金','土','日']},
+  tsukeke:{name:'種付け',cat:'breed',catLabel:'繁殖作業',desc:'発情がきた母豚に対して行う交配作業。最低2回付けを実施する。\n・月曜日のみ：AM中に発情が確認された豚はPMに種付けし、火曜日もPMに2回目（二回付け）を実施する。\n・それ以外の曜日：原則AMに種付けを行う。\n種付けは月〜日の1週間でまとめて管理する。',days:['月','火','水','木','金','土','日']},
+  kanten:{name:'妊娠鑑定（鑑定）',cat:'breed',catLabel:'繁殖作業',desc:'種付けから一定期間後（約3〜4週後）に受胎しているかを確認する作業。超音波等で確認。\n・受胎（○）→ 妊ストへ分娩予定日順で移動\n・不受胎（×）→ 4-1へ移動\n概ね水曜日の朝一、給餌している期間に実施。',days:['水']},
+  rinyu:{name:'離乳',cat:'breed',catLabel:'繁殖作業',desc:'分娩舎で哺育中の子豚を母豚から引き離す作業。毎週木曜日に実施。\n【役割分担】\n・①1人目（中継）：豚を中間で誘導\n・②2人目（受け取り）：種豚舎で受け取り\n・③3人目（母出し）：分娩舎から母豚を出す\n※3号離乳の場合は①が母出し担当になる。',days:['木']},
+  rinyujun:{name:'離乳準備',cat:'breed',catLabel:'繁殖作業',desc:'当週の離乳に向けた準備作業。水曜日のPMに実施。\n離乳予定の豚の確認・移動先ストールの確保・消毒などを行う。',days:['水']},
+  furanuki:{name:'フラ抜き（フラッシング移動）',cat:'breed',catLabel:'繁殖作業',desc:'フラッシングとは、発情促進のために一時的に飼料を増量して栄養状態を高める管理法。\n育成種豚舎の群飼からフラッシングストールに豚を移動させる作業。\n火曜日のAM種付け後、またはPM種付け後に行う。',days:['火']},
+  oshanasu:{name:'オス（雄）を放す',cat:'breed',catLabel:'繁殖作業',desc:'オス豚を雌の前に放し、発情を促す作業。\n・木曜日：離乳後のPMから離乳群に対して放す\n・金・土・日：AMの発情確認後から放す\n【重要】夕方、給餌する前に必ず元の場所に戻すこと。',days:['木','金','土','日']},
+  saisei:{name:'採精',cat:'breed',catLabel:'繁殖作業',desc:'オス豚から精液を採取する作業。主に日曜日に2人目が担当。採取した精液は人工授精（AI）に使用される。\n隔離舎でのロープ採材と合わせて、隔週で検査に提出する。',days:['日']},
+  rope:{name:'ロープ採材・採血',cat:'breed',catLabel:'繁殖作業',desc:'【ロープ採材】隔離舎から育成種豚舎群飼に繰り上げする前に、ロープを用いて唾液を採材する。SMSCに検査を提出し、PRRS陰性であれば繰り上げを行う。PRRS陽性の場合は繰り上げを見送る。\n【採血】育成舎から隔離舎へ繰り上げる際は、ランダムで10頭採血を行い、同じくPRRSの検査を実施する。',days:['日']},
+  hchu:{name:'H注（ホルモン注射）',cat:'hygiene',catLabel:'衛生・処置',desc:'ホルモン剤（セロトロピン）を注射する作業。\n・金曜日：離乳群のGGP・GPの母豚に実施。また無発情のギルト・4-1の残り豚にも実施。\n・木曜日のみ：（該当豚がいれば）実施する場合あり。\n発情促進・繁殖管理のために使用する。',days:['木（該当時）','金']},
+  chiryo:{name:'治療',cat:'hygiene',catLabel:'衛生・処置',desc:'体調不良の豚に薬剤投与・処置を行う作業。毎日いずれかのスタッフが担当する。\n【注意】4-1エリアの豚は廃用予定の可能性が高いため、原則治療を行わない。',days:['月','火','水','木','金','土','日']},
+  hahaara:{name:'母洗（母豚洗浄）',cat:'hygiene',catLabel:'衛生・処置',desc:'分娩舎へ移動する前の母豚を洗浄・消毒する作業。月曜日の③3人目が担当。感染症の分娩舎への持ち込みを防ぐために重要。',days:['月']},
+  sutoarashi:{name:'ストール洗浄（スト洗）',cat:'hygiene',catLabel:'衛生・処置',desc:'使用後のストール内を高圧洗浄機等で清掃する作業。\n・月曜PM：③3人目が導入後の妊ストを洗浄\n・火曜AM：③3人目が月曜に移動した付ストを洗浄し、当週の離乳群を受け入れるための衛生管理として重要。',days:['月','火']},
+  gunara:{name:'群洗（群飼洗浄）',cat:'hygiene',catLabel:'衛生・処置',desc:'群飼エリアを洗浄する作業。水曜PMから木曜日にかけて行う。\n土曜繰り上げになる小屋数分を洗浄・消毒する。',days:['水','木']},
+  ikuarashi:{name:'隔離舎・育成舎洗浄',cat:'hygiene',catLabel:'衛生・処置',desc:'隔離舎（育成舎）の繰り上げ後、次の群が入ってくる前までに洗浄・消毒を行う。\n基本的に土曜日の繰り上げ後に実施する。',days:['土']},
+  hopper:{name:'ホッパー洗浄',cat:'hygiene',catLabel:'衛生・処置',desc:'飼料を貯蔵・供給するホッパー（タンク状の容器）を洗浄する作業。日曜PMに翌日導入予定の群に対して実施する。',days:['日']},
+  nezumi:{name:'ネズミ対策',cat:'hygiene',catLabel:'衛生・処置',desc:'豚舎内のネズミ被害防止のための対策作業。金曜日のPMに隔週で実施（毎週ではない）。毒餌の設置・確認・交換などを行う。',days:['金（隔週）']},
+  card:{name:'カード付け / 馴致カード移動',cat:'move',catLabel:'移動・管理',desc:'【カード付け】母豚移動後の母豚に母豚カードを取り付ける作業。月曜PMに①1人目・②2人目が実施。\n【馴致カード移動】馴致の進捗に応じてカードを次の群に移動させる作業。金曜日の馴致終了後に実施。馴致の開始日は土曜日。',days:['月','金']},
+  ikukaku:{name:'育隔（育成隔離移動）',cat:'move',catLabel:'移動・管理',desc:'育成種豚を隔離舎へ移動させる作業。ほぼ毎日いずれかのスタッフが担当する。\nまた毎週土曜日に、隔離舎から育成種豚舎（育成舎から隔離舎）への繰り上げを行う。\n新しく導入する豚を既存の群と隔離するための重要な防疫手順。',days:['月','火','水','木','金','土','日']},
+  gilt:{name:'ギルト受け取り',cat:'move',catLabel:'移動・管理',desc:'ギルト（まだ一度も分娩したことのない若い雌豚）を受け取る作業。\n土曜日のAMに、隔離舎から育成種豚舎へ導入する際に行われる。',days:['土']},
+  onukan:{name:'大貫・大貫登録',cat:'move',catLabel:'移動・管理',desc:'毎週火曜日のAMに廃用出荷を行う。2人で実施。ほぼ毎週行い、おおよそ20〜50頭を出荷する。\n出荷後はPorkerに大貫登録を行う。',days:['火']},
+  kantelist:{name:'鑑定落ちリスト作成',cat:'move',catLabel:'移動・管理',desc:'水曜日の鑑定後、鑑定した群の受胎率および不受胎となった豚の要因を考察するためのリスト表を作成する作業。\n水曜日の鑑定後、合間で作成していく。翌週月曜日までに提出。',days:['水（作成）','翌月曜（提出）']},
+  tsukesto:{name:'付スト（種付けストール）',cat:'facility',catLabel:'設備・場所',desc:'離乳後の母豚が入るストール。妊ストより狭く、餌箱は銀色。\n受胎（○）→ 妊ストへ分娩予定日順で移動\n不受胎（×）→ 4-1へ移動\n【注意】3-1は付スト・妊スト両方あるが、現在はすべて付ストとして使用中。',days:[]},
+  ninsuto:{name:'妊スト（妊娠ストール）',cat:'facility',catLabel:'設備・場所',desc:'受胎確認後の母豚が入るストール。付ストより広く、餌箱は黒。\n分娩予定日順で日付ごとにまとめて管理する。\n空胎や流産が見つかれば4-1か群飼へ移動（移動しないこともあり）。',days:[]},
+  area41:{name:'4-1エリア（廃用エリア）',cat:'facility',catLabel:'設備・場所',desc:'廃用予定・残り豚・落ち豚・雄豚を収容するエリア。\n【重要】4-1では治療を行わない（廃用予定の可能性が高いため）。\n・妊娠鑑定×の豚 → 4-1へ移動\n・残り豚 → 毎週木曜日に4-1へ移動',days:[]}
+};
+
+function renderTerms(filter){
+  const grid=document.getElementById('terms-grid');
+  grid.innerHTML='';
+  const tc={basic:'tag-basic',breed:'tag-breed',hygiene:'tag-hygiene',move:'tag-move',facility:'tag-facility'};
+  Object.entries(TERMS).forEach(([id,t])=>{
+    if(filter!=='all'&&t.cat!==filter)return;
+    const c=document.createElement('div');
+    c.className='term-card';
+    const dp=t.days.length?`<div class="term-days">${t.days.map(d=>`<span class="day-pill">${d}</span>`).join('')}</div>`:'';
+    c.innerHTML=`<span class="term-tag ${tc[t.cat]}">${t.catLabel}</span><div class="term-name">${t.name}</div><div class="term-desc">${t.desc.replace(/\n/g,'<br>')}</div>${dp}`;
+    grid.appendChild(c);
+  });
+}
+renderTerms('all');
+
+function filterTerms(cat,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTerms(cat);
+}
+
+function showTerm(id){
+  const t=TERMS[id];
+  if(!t)return;
+  document.getElementById('modalTitle').textContent=t.name;
+  document.getElementById('modalCat').textContent=t.catLabel;
+  document.getElementById('modalDesc').innerHTML=t.desc.replace(/\n/g,'<br>');
+  const meta=document.getElementById('modalMeta');
+  const de=document.getElementById('modalDays');
+  if(t.days&&t.days.length){de.innerHTML=t.days.map(d=>`<span class="day-pill">${d}</span>`).join('');meta.style.display='block';}
+  else{meta.style.display='none';}
+  document.getElementById('termModal').classList.add('open');
+}
+
+function showModalCustom(title,desc){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalCat').textContent='マップ情報';
+  document.getElementById('modalDesc').innerHTML=desc.replace(/\n/g,'<br>');
+  document.getElementById('modalMeta').style.display='none';
+  document.getElementById('termModal').classList.add('open');
+}
+
+function closeModal(e){
+  if(!e||e.target===document.getElementById('termModal')||e.target.classList.contains('modal-close-btn')){
+    document.getElementById('termModal').classList.remove('open');
+  }
+}
+
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
